@@ -5,7 +5,7 @@ import { connect } from "react-redux";
 import { getConfig } from "mattermost-redux/selectors/entities/general";
 import { getCurrentUserId } from "mattermost-redux/selectors/entities/users";
 
-import { getPasswordConfig } from "utils/utils.jsx";
+import { getPasswordConfig } from "utils/utils";
 
 import ResetPasswordModal from "./reset_password_modal";
 

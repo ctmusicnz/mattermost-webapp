@@ -1,7 +1,6 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import PropTypes from "prop-types";
 import React from "react";
 import { Modal } from "react-bootstrap";
 import { FormattedMessage } from "react-intl";
@@ -9,21 +8,29 @@ import { FormattedMessage } from "react-intl";
 import { adminResetPassword } from "actions/admin_actions";
 import * as Utils from "utils/utils";
 
-export default class ResetPasswordModal extends React.Component {
-  static propTypes = {
-    user: PropTypes.object,
-    currentUserId: PropTypes.string.isRequired,
-    show: PropTypes.bool.isRequired,
-    onModalSubmit: PropTypes.func,
-    onModalDismissed: PropTypes.func,
-    passwordConfig: PropTypes.object
-  };
+type Props = {
+  user: { id: string; auth_service: string };
+  currentUserId?: string;
+  show?: boolean;
+  onModalSubmit: (user: {}) => void;
+  onModalDismissed: () => void;
+  passwordConfig: React.ReactNode;
+};
 
-  static defaultProps = {
+type State = {
+  serverErrorCurrentPass: any;
+  serverErrorNewPass: any;
+};
+
+export default class ResetPasswordModal extends React.PureComponent<
+  Props,
+  State
+> {
+  public static defaultProps: Partial<Props> = {
     show: false
   };
 
-  constructor(props) {
+  public constructor(props: Props) {
     super(props);
 
     this.state = {
@@ -32,14 +39,14 @@ export default class ResetPasswordModal extends React.Component {
     };
   }
 
-  componentWillUnmount() {
+  public componentWillUnmount() {
     this.setState({
       serverErrorNewPass: null,
       serverErrorCurrentPass: null
     });
   }
 
-  doSubmit = e => {
+  private doSubmit = (e: React.ReactNode) => {
     e.preventDefault();
     let currentPassword = "";
     if (this.refs.currentPassword) {
@@ -77,13 +84,13 @@ export default class ResetPasswordModal extends React.Component {
       () => {
         this.props.onModalSubmit(this.props.user);
       },
-      err => {
+      (err: { message: string }) => {
         this.setState({ serverErrorCurrentPass: err.message });
       }
     );
   };
 
-  doCancel = () => {
+  private doCancel = () => {
     this.setState({
       serverErrorNewPass: null,
       serverErrorCurrentPass: null
@@ -91,7 +98,7 @@ export default class ResetPasswordModal extends React.Component {
     this.props.onModalDismissed();
   };
 
-  render() {
+  public render() {
     const user = this.props.user;
     if (user == null) {
       return <div />;
